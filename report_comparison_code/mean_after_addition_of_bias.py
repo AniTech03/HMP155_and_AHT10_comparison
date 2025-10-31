@@ -8,8 +8,7 @@ AHT10_folder = r"C:\Users\anike\OneDrive\Desktop\IITG project\AC model\Heat flow
 HMP_folder   = r"C:\Users\anike\OneDrive\Desktop\IITG project\AC model\Heat flow Simulation\HMP_AHT10_Compare\HMP_data"
 
 
-# days = ["2025-10-23","2025-10-24","2025-10-25", "2025-10-26", "2025-10-27", "2025-10-28", "2025-10-29"]  # List of days available
-days = ["2025-10-24"]  # List of days available
+days = ["2025-10-23","2025-10-24","2025-10-25", "2025-10-26", "2025-10-27", "2025-10-28", "2025-10-29"]  # List of days available
 
 # ================= READ & MERGE =================
 def load_aht10(day):
@@ -52,19 +51,18 @@ std_RHerr = merged['RHin_Error'].std()
 print("Tin error avg = ",av_Terr, "     SD = ", std_Terr)
 print("RHin error avg = ",av_RHerr, "       SD = ", std_RHerr)
 
-merged['Tin_AHT10'] = merged['Tin_AHT10'] 
-merged['RHin_AHT10'] = merged['RHin_AHT10'] 
-# merged['Tin_AHT10'] = merged['Tin_AHT10'] + 0.33
-# merged['RHin_AHT10'] = merged['RHin_AHT10'] + (-2.31)
-# merged['Tin_Error'] = merged['Tin_HMP'] - merged['Tin_AHT10']
-# merged['RHin_Error'] = merged['RHin_HMP'] - merged['RHin_AHT10']
+merged['Tin_AHT10'] = merged['Tin_AHT10'] + 0.36482638888888896
+merged['RHin_AHT10'] = merged['RHin_AHT10'] + (-2.485659722222222)
+merged['Tin_Error'] = merged['Tin_HMP'] - merged['Tin_AHT10']
+merged['RHin_Error'] = merged['RHin_HMP'] - merged['RHin_AHT10']
 
-# av_Terr = merged['Tin_Error'].mean()
-# av_RHerr = merged['RHin_Error'].mean()
-# std_Terr = merged['Tin_Error'].std()
-# std_RHerr = merged['RHin_Error'].std()
-# print("Tin error avg = ",av_Terr, "     SD = ", std_Terr)
-# print("RHin error avg = ",av_RHerr, "       SD = ", std_RHerr)
+av_Terr = merged['Tin_Error'].mean()
+av_RHerr = merged['RHin_Error'].mean()
+std_Terr = merged['Tin_Error'].std()
+std_RHerr = merged['RHin_Error'].std()
+print("After adding bias:")
+print("Tin error avg = ",av_Terr, "     SD = ", std_Terr)
+print("RHin error avg = ",av_RHerr, "       SD = ", std_RHerr)
 # ================= PLOT =================
 fig, axs = plt.subplots(2, 1, figsize=(13, 7), sharex=True)
 
@@ -80,7 +78,7 @@ merged.loc[time_diff > 120, ['Tin_AHT10', 'Tin_HMP', 'RHin_AHT10', 'RHin_HMP']] 
 ax1.plot(merged['Time_rounded'], merged['Tin_AHT10'], label='AHT10 Tin', color='red', linewidth=1.5)
 ax1.plot(merged['Time_rounded'], merged['Tin_HMP'], label='HMP Tin', color='blue', linewidth=1.5)
 ax1.set_ylabel('Temperature (°C)')
-ax1.set_title('AHT10 vs HMP Comparison with Error for 24-10-2025')
+ax1.set_title('AHT10 vs HMP Comparison with Error')
 ax1.grid(True)
 ax1.legend(loc='upper left')
 
@@ -105,25 +103,12 @@ ax2b.bar(merged['Time_rounded'], merged['RHin_Error'], width=0.0005, color='gray
 ax2b.set_ylabel('RH Error (%)')
 ax2b.legend(loc='upper right')
 
-# ===== FORCE FIXED TIME AXIS =====
-time_min = pd.to_datetime(f"{days[0]} 00:00:00")
-time_max = pd.to_datetime(f"{days[-1]} 23:59:59")
-for ax in [ax1, ax2, ax1b, ax2b]:
-    ax.set_xlim([time_min, time_max])
-
-import matplotlib.dates as mdates
-ax2.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
-ax2.xaxis.set_major_locator(mdates.HourLocator(interval=2))
-
 plt.tight_layout()
 plt.show()
-
 
 
 # ================= SAVE MERGED FILE =================
 merged.to_csv("AHT10_HMP_Merged_with_Error_23th_26th_oct.csv", index=False)
 print("✅ Merged data with errors saved as 'AHT10_HMP_Merged_with_Error_25th_26th_oct.csv'")
 
-# Mean and SD data of 24th Oct 2025:
-# Tin error avg =  0.3407435719249478      SD =  0.19000604700508397
-# RHin error avg =  -2.2783460736622656        SD =  0.9256705510937738
+# Mean and SD data:
